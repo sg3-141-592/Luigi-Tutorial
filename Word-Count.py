@@ -1,7 +1,9 @@
+import pickle
 import requests
 import luigi
 from bs4 import BeautifulSoup
 from collections import Counter
+
 
 class GetTopBooks(luigi.Task):
     def output(self):
@@ -28,6 +30,7 @@ class DownloadBooks(luigi.Task):
         return GetTopBooks()
 
     def output(self):
+
         return luigi.LocalTarget("data/results.txt")
 
     def run(self):
@@ -37,16 +40,36 @@ class DownloadBooks(luigi.Task):
         with self.output().open("w") as f:
             f.write("Hi")
 
+
 class CountWords(luigi.Task):
     fileId = luigi.Parameter()
 
     def output(self):
-        return luigi.LocalTarget("data/count_{}.txt".format(self.fileId))
-    
+        return luigi.LocalTarget(
+            "data/count_{}.pickle".format(self.fileId), format=luigi.format.Nop
+        )
+
     def run(self):
         with open("data/{}.txt".format(self.fileId)) as file:
             word_count = Counter(file.read().split())
-            with self.output().open("w") as f:
-                for item in word_count.items():
-                    f.write("{}\t{}\n".format(*item))
+            with self.output().open("w") as outfile:
+                pickle.dump(word_count, outfile)
 
+
+class ConCat(luigi.Task):
+    def requires(self):
+        return [CountWords(fileId=1), CountWords(fileId=2), CountWords(fileId=3)]
+
+    def output(self):
+        return luigi.LocalTarget("data/summary.txt")
+
+    def run(self):
+        counters = Counter()
+        for input in self.input():
+            with input.open("rb") as infile:
+                nextCounter = pickle.load(infile)
+                counters += nextCounter
+        #
+        with self.output().open("w") as f:
+            for item in counters.items():
+                f.write("{}\t{}\n".format(*item))
