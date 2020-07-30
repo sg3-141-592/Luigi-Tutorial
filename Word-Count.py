@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from collections import Counter
 
 NUM_BOOKS = 10
-REPLACE_LIST = """.,"';_[]:*"""
+REPLACE_LIST = """.,"';_[]:*-"""
 
 class GetTopBooks(luigi.Task):
     def output(self):
@@ -49,7 +49,7 @@ class DownloadBooks(luigi.Task):
                     filtered_text = resp.text
                     for char in REPLACE_LIST:
                         filtered_text = filtered_text.replace(char, " ")
-                    outfile.write(filtered_text)
+                    outfile.write(filtered_text.lower())
 
 
 class CountWords(luigi.Task):
@@ -71,6 +71,8 @@ class CountWords(luigi.Task):
 
 
 class ConCat(luigi.Task):
+    NUMRESULTS = luigi.IntParameter() # Number of top words to return
+
     def requires(self):
         requiredInputs = []
         for i in range(NUM_BOOKS):
@@ -88,5 +90,5 @@ class ConCat(luigi.Task):
                 counters += nextCounter
         #
         with self.output().open("w") as f:
-            for item in counters.items():
+            for item in counters.most_common(self.NUMRESULTS):
                 f.write("{}\t{}\n".format(*item))
