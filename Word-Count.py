@@ -1,7 +1,7 @@
 import requests
 import luigi
 from bs4 import BeautifulSoup
-
+from collections import Counter
 
 class GetTopBooks(luigi.Task):
     def output(self):
@@ -34,6 +34,19 @@ class DownloadBooks(luigi.Task):
         with self.input().open("r") as i:
             for i, line in enumerate(i.read().splitlines()):
                 resp = requests.get(line)
-                file = open()
         with self.output().open("w") as f:
             f.write("Hi")
+
+class CountWords(luigi.Task):
+    fileId = luigi.Parameter()
+
+    def output(self):
+        return luigi.LocalTarget("data/count_{}.txt".format(self.fileId))
+    
+    def run(self):
+        with open("data/{}.txt".format(self.fileId)) as file:
+            word_count = Counter(file.read().split())
+            with self.output().open("w") as f:
+                for item in word_count.items():
+                    f.write("{}\t{}\n".format(*item))
+
