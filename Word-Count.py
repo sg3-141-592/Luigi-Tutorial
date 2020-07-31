@@ -4,12 +4,13 @@ import luigi
 from bs4 import BeautifulSoup
 from collections import Counter
 
-NUM_BOOKS = 10
 REPLACE_LIST = """.,"';_[]:*-"""
 
+
 class GetTopBooks(luigi.Task):
+
     def output(self):
-        return luigi.LocalTarget("data/topBooks.txt")
+        return luigi.LocalTarget("data/{}_bookslist.txt".format(GlobalParams().NUMBER_BOOKS))
 
     def run(self):
         resp = requests.get("http://www.gutenberg.org/browse/scores/top")
@@ -27,8 +28,13 @@ class GetTopBooks(luigi.Task):
                             link=result["href"]
                         )
                     )
-                    if resultCounter >= NUM_BOOKS:
+                    print(GlobalParams.NUMBER_BOOKS)
+                    if resultCounter >= GlobalParams().NUMBER_BOOKS:
                         break
+
+class GlobalParams(luigi.Config):
+    NUMBER_BOOKS = luigi.IntParameter(default=10)
+    NUMBER_WORDS = luigi.IntParameter(default=500)
 
 
 class DownloadBooks(luigi.Task):
@@ -37,8 +43,8 @@ class DownloadBooks(luigi.Task):
 
     def output(self):
         outputTargets = []
-        for i in range(NUM_BOOKS):
-            outputTargets.append( luigi.LocalTarget("data/downloads/{}.txt".format(i)) )
+        for i in range(GlobalParams().NUMBER_BOOKS):
+            outputTargets.append(luigi.LocalTarget("data/downloads/{}.txt".format(i)))
         return outputTargets
 
     def run(self):
@@ -70,13 +76,12 @@ class CountWords(luigi.Task):
                 pickle.dump(word_count, outfile)
 
 
-class ConCat(luigi.Task):
-    NUMRESULTS = luigi.IntParameter() # Number of top words to return
-
+class TopWords(luigi.Task):
+    
     def requires(self):
         requiredInputs = []
-        for i in range(NUM_BOOKS):
-            requiredInputs.append( CountWords(fileId=i) )
+        for i in range(GlobalParams().NUMBER_BOOKS):
+            requiredInputs.append(CountWords(fileId=i))
         return requiredInputs
 
     def output(self):
@@ -90,5 +95,5 @@ class ConCat(luigi.Task):
                 counters += nextCounter
         #
         with self.output().open("w") as f:
-            for item in counters.most_common(self.NUMRESULTS):
+            for item in counters.most_common(GlobalParams().NUMBER_WORDS):
                 f.write("{}\t{}\n".format(*item))
