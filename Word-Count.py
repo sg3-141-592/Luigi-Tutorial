@@ -8,9 +8,10 @@ REPLACE_LIST = """.,"';_[]:*-"""
 
 
 class GetTopBooks(luigi.Task):
-
     def output(self):
-        return luigi.LocalTarget("data/{}_bookslist.txt".format(GlobalParams().NUMBER_BOOKS))
+        return luigi.LocalTarget(
+            "data/{}_bookslist.txt".format(GlobalParams().NUMBER_BOOKS)
+        )
 
     def run(self):
         resp = requests.get("http://www.gutenberg.org/browse/scores/top")
@@ -31,6 +32,7 @@ class GetTopBooks(luigi.Task):
                     print(GlobalParams.NUMBER_BOOKS)
                     if resultCounter >= GlobalParams().NUMBER_BOOKS:
                         break
+
 
 class GlobalParams(luigi.Config):
     NUMBER_BOOKS = luigi.IntParameter(default=10)
@@ -77,7 +79,6 @@ class CountWords(luigi.Task):
 
 
 class TopWords(luigi.Task):
-    
     def requires(self):
         requiredInputs = []
         for i in range(GlobalParams().NUMBER_BOOKS):

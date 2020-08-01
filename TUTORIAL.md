@@ -1,3 +1,11 @@
+### Introduction
+In this tutorial we will build a data processing pipeline to download the most popular books from Project Gutenburg and analyse the most common words in them.
+
+We will build this using the Python library Luigi. Luigi allows us to define a data processing job as a graph of tasks. Luigi gives us features like visualisation of our process, handling of failures
+
+### Pre-requisites
+- Python 3.6 or higher and ```virtualenv``` installed. Follow [How To Install Python 3 on Ubuntu 20.04](https://www.digitalocean.com/community/tutorials/how-to-install-python-3-and-set-up-a-programming-environment-on-an-ubuntu-20-04-server) to configure Python and ```virtualenv```.
+
 
 ## Installating Luigi
 
@@ -26,11 +34,6 @@ pip install luigi
 sudo ufw allow 8082
 ```
 
-### A
-We want to download the top books from Project Gutenburg and analyse the most common words in them.
-
-Luigi allows us to build pipelines of data processing.
-
 ### Running the Luigi Scheduler
 Simple tasks can be run using the ```--local-scheduler``` argument.
 
@@ -38,5 +41,15 @@ Tasks are run as a one off using the ```--local-scheduler``` argument.
 
 In production we use the Luigi daemon. This gives a central point for running our pipelines and provides visualisation of them. 
 
-### 1. Getting Number of Books
+### Getting Number of Books
+A. We show the user they can interrogate the 
 
+### Setting Parameters
+A
+
+### Downloading the Books
+A
+
+### Analysing the Most Frequent Words
+
+### Conclusion
