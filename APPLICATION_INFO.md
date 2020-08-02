@@ -19,19 +19,22 @@ There are currently no tutorials of the major batch pipeline platforms for Pytho
 ## Step 1 — Installing Luigi
 In this step we will build a virtual environment for this tutorial, and download the latest version of the Luigi package.
 
-## Step 2 — Getting List of Books
+## Step 2 — Creating a Luigi Task
+In this step we will create a "Hello World" Luigi Task to demonstrate how they work.
+
+## Step 3 — Getting List of Books
 In this step we will create a Python script to download a list of books, and run it as a Luigi task.
 
-## Step 3 — Running the Luigi Scheduler
+## Step 4 — Running the Luigi Scheduler
 In this step we will launch the Luigi scheduler, and learn the concepts behind the Luigi execution model. You will take your task developed in Step 2, and run it using the Luigi scheduler.
 
-### Step 4 — Downloading the Books
+### Step 5 — Downloading the Books
 In this step you will create a Luigi task to download a specified book. You will define a dependency between this newly created task, and the task created in step 3. You will visualise the execution of the task within the Luigi interface.
 
-### Step 5 — Counting words and Summarising Results
+### Step 6 — Counting words and Summarising Results
 In this step you will create a Luigi task to count the frequency of words in each of the books downloaded in Step 4. You will create a Luigi task to aggregate and summarise the most frequent words across all books analysed.
 
-### Step 6 — Defining Configuration Parameters
+### Step 7 — Defining Configuration Parameters
 In this step you will add configuration parameters to your tasks to allow you customise how many books to analyse, and the number of words to include in the results.
 
 ------------------

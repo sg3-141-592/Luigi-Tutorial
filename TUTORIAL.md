@@ -91,7 +91,9 @@ Successfully installed beautifulsoup4-4.9.1 certifi-2020.6.20 chardet-3.0.4 docu
 ```
 
 ## Step 2 - Creating a Luigi Task
-In this step we will create a "Hello World" Luigi Task to demonstrate their concepts. A Luigi Task is where the execution of our pipeline and the definition of dependencies takes place.
+In this step we will create a "Hello World" Luigi Task to demonstrate how they work.
+
+A Luigi Task is where the execution of our pipeline and the definition of each tasks input and output dependencies take place. Tasks are the building blocks that we will create our pipeline from.
 
 Create a new file ```hello-world.py```, and insert the following code.
 
@@ -109,9 +111,9 @@ class HelloLuigi(luigi.Task):
 
 ```
 
-We can create classes that follow the 
+We define that ```HelloLuigi``` is a Luigi Task by adding the ```luigi.Task``` mixin to our class.
 
-The ```output()``` method defines one or more ```Target``` objects that our task produces. A target is a data source we are connecting to. In the case of this demo, we define a ```luigi.LocalTarget```, which is a local file. 
+The ```output()``` method defines one or more ```Target``` outputs that our task produces. A target is a data source we are connecting to. In the case of this demo, we define a ```luigi.LocalTarget```, which is a local file. 
 
 Luigi allows you to connect to a variety of common data sources including [AWS S3 buckets](https://luigi.readthedocs.io/en/stable/api/luigi.contrib.s3.html), [MongoDB databases](https://luigi.readthedocs.io/en/stable/api/luigi.contrib.mongodb.html) and [SQL databases](https://luigi.readthedocs.io/en/stable/api/luigi.contrib.sqla.html).
 
@@ -131,7 +133,25 @@ The ```--local-scheduler``` flag tells Luigi to not connect to a Luigi scheduler
 
 We run using ```python -m``` instead of executing luigi directly as Luigi can only execute code that is with the current PYTHONPATH. 
 
+Luigi will output a summary of the Tasks executed.
 
+```
+===== Luigi Execution Summary =====
+
+Scheduled 1 tasks of which:
+* 1 ran successfully:
+    - 1 HelloLuigi()
+
+This progress looks :) because there were no failed tasks or missing dependencies
+
+===== Luigi Execution Summary =====
+```
+
+A new file ```hello-luigi.txt```  will be created, with content:
+
+```
+Hello Luigi!
+```
 
 ## Step 2 - Getting List of Books
 In this step we will create a Python script to download a list of books, and run it as a Luigi task.
