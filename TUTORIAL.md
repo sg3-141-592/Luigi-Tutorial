@@ -78,11 +78,83 @@ You see ```(luigi-venv)``` appended to the front of your terminal to indicate wh
 (luigi-venv)username@hostname:~/luigi-demo$
 ```
 
-For this tutorial we will need three libraries, ```luigi```, ```beautifulsoup4``` and ```requests```. Run the following command to install these libraries with pip:
+For this tutorial we will need three libraries, ```luigi```, ```beautifulsoup4``` and ```requests```. Run the following command to install these libraries using pip:
 
 ``` bash
 pip install luigi beautifulsoup4 requests
 ```
 
+You will get a response that the latest verisons of the libraries and all of their dependencies have been installed.
+
+``` bash
+Successfully installed beautifulsoup4-4.9.1 certifi-2020.6.20 chardet-3.0.4 docutils-0.16 idna-2.10 lockfile-0.12.2 luigi-3.0.1 python-daemon-2.2.4 python-dateutil-2.8.1 requests-2.24.0 six-1.15.0 soupsieve-2.0.1 tornado-5.1.1 urllib3-1.25.10
+```
+
+## Step 2 - Creating a Luigi Task
+In this step we will create a "Hello World" Luigi Task to demonstrate their concepts. A Luigi Task is where the execution of our pipeline and the definition of dependencies takes place.
+
+Create a new file ```hello-world.py```, and insert the following code.
+
+``` python
+import luigi
+
+class HelloLuigi(luigi.Task):
+
+    def output(self):
+        return luigi.LocalTarget('hello-luigi.txt')
+
+    def run(self):
+        with self.output().open("w") as outfile:
+            outfile.write("Hello Luigi!")
+
+```
+
+We can create classes that follow the 
+
+The ```output()``` method defines one or more ```Target``` objects that our task produces. A target is a data source we are connecting to. In the case of this demo, we define a ```luigi.LocalTarget```, which is a local file. 
+
+Luigi allows you to connect to a variety of common data sources including [AWS S3 buckets](https://luigi.readthedocs.io/en/stable/api/luigi.contrib.s3.html), [MongoDB databases](https://luigi.readthedocs.io/en/stable/api/luigi.contrib.mongodb.html) and [SQL databases](https://luigi.readthedocs.io/en/stable/api/luigi.contrib.sqla.html).
+
+You can find a complete list of supported data sources [here](https://luigi.readthedocs.io/en/stable/api/luigi.contrib.html).
+
+The ```run()``` method contains the code we want to execute for our pipeline stage. For this example we are taking the output target we defined, and writing "Hello Luigi!" to.
+
+To execute the new function run the following command
+
+``` bash
+python -m luigi --module hello-world HelloLuigi --local-scheduler
+```
+
+For the ```--module hello-world HelloLuigi``` flag we tell Luigi which Python module and Luigi Task to execute.
+
+The ```--local-scheduler``` flag tells Luigi to not connect to a Luigi scheduler daemon, and instead execute this task locally. Running tasks using the ```local-scheduler``` flag is only recommended for testing.
+
+We run using ```python -m``` instead of executing luigi directly as Luigi can only execute code that is with the current PYTHONPATH. 
+
+
+
 ## Step 2 - Getting List of Books
-In this step we will create a Python script to download a list of books, and run it as a Luigi task. 
+In this step we will create a Python script to download a list of books, and run it as a Luigi task.
+
+Create a new file ```word-frequency.py```, and insert the following code. The following code uses the requests library to download the contents of the top most read books on [Project Gutenberg](http://www.gutenberg.org).
+
+``` python
+resp = requests.get("http://www.gutenberg.org/browse/scores/top")
+soup = BeautifulSoup(resp.content, "html.parser")
+# Get the header from the page
+pageHeader = soup.find_all("h2", string="Top 100 EBooks yesterday")[0]
+listTop = pageHeader.find_next_sibling("ol")
+with self.output().open("w") as f:
+    resultCounter = 0
+    for result in listTop.select("li>a"):
+        if "/ebooks/" in result["href"]:
+            resultCounter += 1
+            f.write(
+                "http://www.gutenberg.org/{link}.txt.utf-8\n".format(
+                    link=result["href"]
+                )
+            )
+            print(GlobalParams.NUMBER_BOOKS)
+            if resultCounter >= GlobalParams().NUMBER_BOOKS:
+                break
+```

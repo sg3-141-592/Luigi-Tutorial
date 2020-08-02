@@ -2,6 +2,10 @@ I found it from a Hacker News article about writing for LWN. In the comments som
 
 --------------
 
+How To Build a Data Processing Pipeline with Luigi on Python 3
+
+--------------
+
 The framework in this tutorial is a powerful and optimised way of producing and managing a data processing pipeline. It was developed by Spotify to solve its own internal data processing needs
 
 The package is a popular solution (see Github https://github.com/spotify/luigi stars and activity) and is being used by major companies to solve real problems (see https://luigi.readthedocs.io/en/stable/index.html "Who uses Luigi?").
@@ -16,7 +20,7 @@ There are currently no tutorials of the major batch pipeline platforms for Pytho
 In this step we will build a virtual environment for this tutorial, and download the latest version of the Luigi package.
 
 ## Step 2 — Getting List of Books
-In this step we will create a Python script to download a list of books, and run it as a Luigi task. You will run you Luigi task as a local job.
+In this step we will create a Python script to download a list of books, and run it as a Luigi task.
 
 ## Step 3 — Running the Luigi Scheduler
 In this step we will launch the Luigi scheduler, and learn the concepts behind the Luigi execution model. You will take your task developed in Step 2, and run it using the Luigi scheduler.

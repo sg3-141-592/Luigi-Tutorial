@@ -14,10 +14,12 @@ class GetTopBooks(luigi.Task):
         )
 
     def run(self):
+        # Download the contents of the top page
         resp = requests.get("http://www.gutenberg.org/browse/scores/top")
         soup = BeautifulSoup(resp.content, "html.parser")
         # Get the header from the page
         pageHeader = soup.find_all("h2", string="Top 100 EBooks yesterday")[0]
+
         listTop = pageHeader.find_next_sibling("ol")
         with self.output().open("w") as f:
             resultCounter = 0
