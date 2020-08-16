@@ -46,7 +46,7 @@ Tasks are run as a one off using the ```--local-scheduler``` argument.
 In production we use the Luigi daemon. This gives a central point for running our pipelines and provides visualisation of them. 
 
 ## Step 1 — Installing Luigi
-In this step, we'll create a virtual environment to provide a clean sandbox environment to install Luigi into.
+In this step, we will create a virtual environment to provide a clean sandbox environment to install Luigi into.
 
 First, create a project directory. For this tutorial we'll call it ```luigi-demo```:
 
@@ -113,25 +113,27 @@ class HelloLuigi(luigi.Task):
 
 We define that ```HelloLuigi``` is a Luigi Task by adding the ```luigi.Task``` mixin to our class.
 
-The ```output()``` method defines one or more ```Target``` outputs that our task produces. A target is a data source we are connecting to. In the case of this demo, we define a ```luigi.LocalTarget```, which is a local file. 
+The ```output()``` method defines one or more ```Target``` outputs that our task produces. A target is a data source we are connecting to. In the case of this demo, we define a ```luigi.LocalTarget``` which is a local file. 
 
-Luigi allows you to connect to a variety of common data sources including [AWS S3 buckets](https://luigi.readthedocs.io/en/stable/api/luigi.contrib.s3.html), [MongoDB databases](https://luigi.readthedocs.io/en/stable/api/luigi.contrib.mongodb.html) and [SQL databases](https://luigi.readthedocs.io/en/stable/api/luigi.contrib.sqla.html).
+<$>[note]
+**Note:** Luigi allows you to connect to a variety of common data sources including [AWS S3 buckets](https://luigi.readthedocs.io/en/stable/api/luigi.contrib.s3.html), [MongoDB databases](https://luigi.readthedocs.io/en/stable/api/luigi.contrib.mongodb.html) and [SQL databases](https://luigi.readthedocs.io/en/stable/api/luigi.contrib.sqla.html).
 
 You can find a complete list of supported data sources [here](https://luigi.readthedocs.io/en/stable/api/luigi.contrib.html).
+<$>
 
 The ```run()``` method contains the code we want to execute for our pipeline stage. For this example we are taking the output target we defined, and writing "Hello Luigi!" to.
 
-To execute the new function run the following command
+To execute the Task you created run the following command
 
-``` bash
+```
 python -m luigi --module hello-world HelloLuigi --local-scheduler
 ```
 
+We run using ```python -m``` instead of executing Luigi directly as Luigi can only execute code that is with the current ```PYTHONPATH```.
+
 For the ```--module hello-world HelloLuigi``` flag we tell Luigi which Python module and Luigi Task to execute.
 
-The ```--local-scheduler``` flag tells Luigi to not connect to a Luigi scheduler daemon, and instead execute this task locally. Running tasks using the ```local-scheduler``` flag is only recommended for testing.
-
-We run using ```python -m``` instead of executing luigi directly as Luigi can only execute code that is with the current PYTHONPATH. 
+The ```--local-scheduler``` flag tells Luigi to not connect to a Luigi scheduler daemon, and instead execute this task locally. Running tasks using the ```local-scheduler``` flag is only recommended for testing. 
 
 Luigi will output a summary of the Tasks executed.
 

@@ -8,6 +8,10 @@ REPLACE_LIST = """.,"';_[]:*-"""
 
 
 class GetTopBooks(luigi.Task):
+    """
+    Get list of the most popular books from Project Gutenberg
+    """
+
     def output(self):
         return luigi.LocalTarget(
             "data/{}_bookslist.txt".format(GlobalParams().NUMBER_BOOKS)
