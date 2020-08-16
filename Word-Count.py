@@ -46,31 +46,30 @@ class GlobalParams(luigi.Config):
 
 
 class DownloadBooks(luigi.Task):
+    fileId = luigi.Parameter()
+
     def requires(self):
         return GetTopBooks()
 
     def output(self):
-        outputTargets = []
-        for i in range(GlobalParams().NUMBER_BOOKS):
-            outputTargets.append(luigi.LocalTarget("data/downloads/{}.txt".format(i)))
-        return outputTargets
+        return luigi.LocalTarget("data/downloads/{}.txt".format(self.fileId))
 
     def run(self):
         with self.input().open("r") as i:
-            for i, line in enumerate(i.read().splitlines()):
-                with self.output()[i].open("w") as outfile:
-                    resp = requests.get(line)
-                    filtered_text = resp.text
-                    for char in REPLACE_LIST:
-                        filtered_text = filtered_text.replace(char, " ")
-                    outfile.write(filtered_text.lower())
+            URL = i.read().splitlines()[self.fileId]
+            with self.output().open("w") as outfile:
+                resp = requests.get(URL)
+                filtered_text = resp.text
+                for char in REPLACE_LIST:
+                    filtered_text = filtered_text.replace(char, " ")
+                outfile.write(filtered_text.lower())
 
 
 class CountWords(luigi.Task):
     fileId = luigi.Parameter()
 
     def requires(self):
-        return DownloadBooks()
+        return DownloadBooks(fileId=self.fileId)
 
     def output(self):
         return luigi.LocalTarget(
